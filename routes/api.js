@@ -24,35 +24,53 @@ router.get('/personas/show/:id', (req, res) => {
 
 //Ruta: /api/familiares/create
 router.post('/familiares/create', (req, res) => {
-    modelFamiliar.create({
-        nombre: req.body.param1.nombre,
-        apellidos: req.body.param1.apellidos,
-        correo: req.body.param1.correo,
-        telefono: req.body.param1.telefono,
-        contrasena: req.body.param1.contrasena,
-        contrasenaRepeat: req.body.param1.contrasenaRepeat
-    }, (err, result) => {
-        if(err) {
-            console.log(err.message);
-            res.json({error: 'Registro KO'})
+    modelFamiliar.find(req.body.param1.correo, (err, row) => {
+        if(err) return console.log(err.message)
+        if(row.length === 0) {
+            modelFamiliar.create({
+                nombre: req.body.param1.nombre,
+                apellidos: req.body.param1.apellidos,
+                correo: req.body.param1.correo,
+                telefono: req.body.param1.telefono,
+                contrasena: req.body.param1.contrasena,
+                contrasenaRepeat: req.body.param1.contrasenaRepeat
+            }, (err, result) => {
+                if(err) {
+                    console.log(err.message);
+                    res.json({error: 'Registro KO'})
+                } else {
+                    res.json({success: 'Registro OK'});
+                }
+            })
         } else {
-            res.json({success: 'Registro OK'});
+            res.json({err: 'Usuario ya registrado'})
         }
     })
 })
 
 //Ruta: /api/educadores/create
 router.post('/educadores/create', (req, res) => {
-    modelEducador.create({
-        nombre: req.body.param1.nombre,
-        apellidos: req.body.param1.apellidos,
-        correo: req.body.param1.correo,
-        telefono: req.body.param1.telefono,
-        contrasena: req.body.param1.contrasena,
-        contrasenaRepeat: req.body.param1.contrasenaRepeat
-    }, (err, result) => {
-        if(err) return console.log(err.message);
-        res.json({success: 'Se ha creado el registro'});
+    modelEducador.find(req.body.param1.correo, (err, row) => {
+        if(err) return console.log(err.message)
+        if(row.length === 0) {
+            modelEducador.create({
+                nombre: req.body.param1.nombre,
+                apellidos: req.body.param1.apellidos,
+                correo: req.body.param1.correo,
+                telefono: req.body.param1.telefono,
+                contrasena: req.body.param1.contrasena,
+                contrasenaRepeat: req.body.param1.contrasenaRepeat
+            }, (err, result) => {
+                if(err) {
+                    console.log(err.message);
+                    res.json({error: 'Registro KO'})
+                } else {
+                    res.json({success: 'Registro OK'});
+                }
+            })
+        } else {
+            res.json({err: 'Usuario ya registrado'})
+        }
     })
 })
 
