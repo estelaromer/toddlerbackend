@@ -80,33 +80,94 @@ router.post('/loginmatch', (req, res) => {
     let email = req.body.correo;
     let pswd = req.body.contrasena;
     if (usuario === 'familiares') {
-        modelFamiliar.find(email, (err, row) => {
-            if(err) return console.log(err.message)
-            if(row.length === 0) {
-                res.json({err : 'Usuario no registrado'})
-            } else {
-                if(pswd !== row[0].contrasena) {
-                    res.json({err: 'Contraseña incorrecta'});
-                } else {
-                    res.json(row);
-                }
-            }
-        })
+        getFamiliarByEmail(email,pswd,res);
     } else {
-        modelEducador.find(email, (err, row) => {
-            if(err) return console.log(err.message)
-            if(row.length === 0) {
-                res.json({err : 'Usuario no registrado'})
-            } else {
-                if(pswd !== row[0].contrasena) {
-                    res.json({err: 'Contraseña incorrecta'});
-                } else {
-                    res.json(row);
-                }
-            }
-        })
+        getEducadorByEmail(email,pswd,res);
     }
 })
+
+router.post('/fetch/:id', (req,res) => {
+    let id = req.params.id;
+    let usuario = req.body.param1;
+    console.log(id);
+    console.log(usuario);
+    if(usuario === 'familiares') {
+        getFamiliarProfileById(id, res);
+    } else {
+        getEducadorProfileById(id,res);
+    }
+})
+
+function getFamiliarProfileById(id,res){
+    modelFamiliar.findById(id, (err, row) => {
+        if(err) return console.log(err.message)
+        if(row.length === 0) {
+            res.json({err : 'Usuario no registrado'})
+        } else {
+            let familiar = row[0];
+            res.json({
+                'Nombre': familiar.nombre, 
+                'Apellidos': familiar.apellidos,
+                'Email': familiar.correo,
+                'Telefono': familiar.telefono,
+                'Direccion': familiar.direccion,
+                'Ciudad': familiar.ciudad,
+                'CódigoPostal': familiar.codigo_postal,
+                'Foto': familiar.foto
+            });
+        }
+    })
+}
+
+function getEducadorProfileById(id,res) {
+    modelEducador.findById(id, (err,row) => {
+        if(err) return console.log(err.message)
+        if(row.length === 0) {
+            res.json({err : 'Usuario no registrado'})
+        } else {
+            let educador = row[0];
+            res.json({
+                'Nombre': educador.nombre, 
+                'Apellidos': educador.apellidos,
+                'Email': educador.correo,
+                'Telefono': educador.telefono,
+                'Foto': educador.foto
+            });
+        }
+    })
+}
+
+function getFamiliarByEmail(email,pswd, res){
+    modelFamiliar.findByEmail(email, (err, row) => {
+        if(err) return console.log(err.message)
+        if(row.length === 0) {
+            res.json({err : 'Usuario no registrado'})
+        } else {
+            if(pswd !== row[0].contrasena) {
+                res.json({err: 'Contraseña incorrecta'});
+            } else {
+                let familiar = row[0];
+                res.json({'id': familiar.id_familiar});
+            }
+        }
+    })
+}
+
+function getEducadorByEmail(email, pswd, res){
+    modelEducador.findByEmail(email, (err, row) => {
+        if(err) return console.log(err.message)
+        if(row.length === 0) {
+            res.json({err : 'Usuario no registrado'})
+        } else {
+            if(pswd !== row[0].contrasena) {
+                res.json({err: 'Contraseña incorrecta'});
+            } else {
+                let educador = row[0];
+                res.json({'id': educador.id_educador});
+            }
+        }
+    })
+}
 
 //Ruta: /api/personas/destroy
 /*router.delete('/personas/destroy', (req,res) => {

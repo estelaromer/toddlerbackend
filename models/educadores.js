@@ -2,8 +2,8 @@
 
 let db = require('../db');
 
-//Busca en la tabla familiares si existe un usuario con el email proporcionado en el form de login.
-exports.find = (pemail, done) => {
+//Busca en la tabla educadores si existe un usuario con el email proporcionado en el form de login.
+exports.findByEmail = (pemail, done) => {
     let consulta = 'SELECT * FROM educadores WHERE correo=?';
     db.get().query(consulta, [pemail], (err, rows) => {
         if(err) return done(err, null);
@@ -11,6 +11,17 @@ exports.find = (pemail, done) => {
     })
 }
 
+//Busca en la tabla educadores el usuario cuyo id coincide con el del parámetro de búsqueda.
+exports.findById = (pId, done) => {
+    let consulta = 'SELECT * FROM educadores WHERE id_educador=?';
+    db.get().query(consulta, [pId], (err, rows) => {
+        if(err) return done(err, null);
+        done(null, rows);
+    })
+}
+
+
+//Inserta en la tabla educadores un nuevo registro
 exports.create = ({nombre, apellidos, correo, telefono, contrasena, contrasenaRepeat}, done) => {
     let values = [nombre, apellidos, correo, telefono, contrasena, contrasenaRepeat];
     console.log(values);
@@ -21,3 +32,11 @@ exports.create = ({nombre, apellidos, correo, telefono, contrasena, contrasenaRe
         done(null, result);
     });
 };
+
+exports.findClassId = (pId, done) => {
+    let consulta = 'SELECT clase FROM educadores-clases WHERE educador=?';
+    db.get().query(consulta, [pId], (err, rows) => {
+        if(err) return done(err, null);
+        done(null, rows);
+    })
+}

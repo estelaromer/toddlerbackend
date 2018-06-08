@@ -22,7 +22,7 @@ exports.find = (idPersona, done) => {
 */
 
 //Busca en la tabla familiares si existe un usuario con el email proporcionado en el form de login.
-exports.find = (pemail, done) => {
+exports.findByEmail = (pemail, done) => {
     let consulta = 'SELECT * FROM familiares WHERE correo=?';
     db.get().query(consulta, [pemail], (err, rows) => {
         if(err) return done(err, null);
@@ -30,6 +30,17 @@ exports.find = (pemail, done) => {
     })
 }
 
+
+//Busca en la tabla familiares el usuario con el id que coincide con el del parámetro
+exports.findById = (pId, done) => {
+    let consulta = 'SELECT * FROM familiares WHERE id_familiar=?';
+    db.get().query(consulta, [pId], (err, rows) => {
+        if(err) return done(err, null);
+        done(null, rows);
+    })
+}
+
+//Inserta un nuevo familiar en la tabla familiares
 exports.create = ({nombre, apellidos, correo, telefono, contrasena, contrasenaRepeat}, done) => {
     let values = [nombre, apellidos, correo, telefono, contrasena, contrasenaRepeat];
     console.log(values);
