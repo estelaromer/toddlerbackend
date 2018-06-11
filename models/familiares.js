@@ -52,13 +52,13 @@ exports.create = ({nombre, apellidos, correo, telefono, contrasena, contrasenaRe
     });
 };
 
-exports.findToddlerIds = (pId, done) => {
+/*exports.findToddlerIds = (pId, done) => {
     let consulta = 'SELECT alumno FROM familiaresalumnos WHERE familiar=?';
     db.get().query(consulta, [pId], (err,rows) => {
         if(err) return done(err, null);
         done(null, rows);
     })
-}
+}*/
 
 /*exports.destroy = (idPersona, done) => {
     let elimina = 'DELETE FROM personas where idpersona=?';

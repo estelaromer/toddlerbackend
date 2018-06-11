@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 let db = require('../db');
 let modelAlumno = require('../models/alumnos');
+let modelClase = require('./../models/clases');
 let modelFamiliar = require('../models/familiares');
 let modelEducador = require('../models/educadores');
 
@@ -25,8 +26,8 @@ router.get('/personas/show/:id', (req, res) => {
 //Ruta: /api/familiares/create
 router.post('/familiares/create', (req, res) => {
     modelFamiliar.findByEmail(req.body.param1.correo, (err, rows) => {
-        if(err) return console.log(err.message)
-        if(rows.length === 0) {
+        if (err) return console.log(err.message)
+        if (rows.length === 0) {
             modelFamiliar.create({
                 nombre: req.body.param1.nombre,
                 apellidos: req.body.param1.apellidos,
@@ -35,15 +36,15 @@ router.post('/familiares/create', (req, res) => {
                 contrasena: req.body.param1.contrasena,
                 contrasenaRepeat: req.body.param1.contrasenaRepeat
             }, (err, result) => {
-                if(err) {
+                if (err) {
                     console.log(err.message);
-                    res.json({error: 'Registro KO'})
+                    res.json({ error: 'Registro KO' })
                 } else {
-                    res.json({success: 'Registro OK'});
+                    res.json({ success: 'Registro OK' });
                 }
             })
         } else {
-            res.json({err: 'Usuario ya registrado'})
+            res.json({ err: 'Usuario ya registrado' })
         }
     })
 })
@@ -51,8 +52,8 @@ router.post('/familiares/create', (req, res) => {
 //Ruta: /api/educadores/create
 router.post('/educadores/create', (req, res) => {
     modelEducador.findByEmail(req.body.param1.correo, (err, rows) => {
-        if(err) return console.log(err.message)
-        if(rows.length === 0) {
+        if (err) return console.log(err.message)
+        if (rows.length === 0) {
             modelEducador.create({
                 nombre: req.body.param1.nombre,
                 apellidos: req.body.param1.apellidos,
@@ -61,15 +62,15 @@ router.post('/educadores/create', (req, res) => {
                 contrasena: req.body.param1.contrasena,
                 contrasenaRepeat: req.body.param1.contrasenaRepeat
             }, (err, result) => {
-                if(err) {
+                if (err) {
                     console.log(err.message);
-                    res.json({error: 'Registro KO'})
+                    res.json({ error: 'Registro KO' })
                 } else {
-                    res.json({success: 'Registro OK'});
+                    res.json({ success: 'Registro OK' });
                 }
             })
         } else {
-            res.json({err: 'Usuario ya registrado'})
+            res.json({ err: 'Usuario ya registrado' })
         }
     })
 })
@@ -80,21 +81,21 @@ router.post('/loginmatch', (req, res) => {
     let email = req.body.correo;
     let pswd = req.body.contrasena;
     if (usuario === 'familiares') {
-        getFamiliarByEmail(email,pswd,res);
+        getFamiliarByEmail(email, pswd, res);
     } else {
-        getEducadorByEmail(email,pswd,res);
+        getEducadorByEmail(email, pswd, res);
     }
 })
 
-router.post('/fetch/:id', (req,res) => {
+router.post('/fetch/:id', (req, res) => {
     let id = req.params.id;
     let usuario = req.body.param1;
     console.log(id);
     console.log(usuario);
-    if(usuario === 'familiares') {
+    if (usuario === 'familiares') {
         getFamiliarProfileById(id, res);
     } else {
-        getEducadorProfileById(id,res);
+        getEducadorProfileById(id, res);
     }
 })
 
@@ -119,41 +120,77 @@ router.post('/fetch/:id', (req,res) => {
     })
 }*/
 
-function getFamiliarProfileById(id,res){
+
+/*function getFamiliarProfileById(id, res) {
     modelFamiliar.findById(id, (err, rows) => {
-        if(err) return console.log(err.message)
-        if(rows.length === 0) {
-            res.json({err : 'Usuario no registrado'})
+        if (err) return console.log(err.message)
+        if (rows.length === 0) {
+            res.json({ err: 'Usuario no registrado' })
         } else {
-            var familiar = {
+            let familiar = {
                 'nombre': rows[0].nombre,
                 'apellidos': rows[0].apellidos,
                 'email': rows[0].correo,
-                'telefono': rows[0].direccion,
+                'telefono': rows[0].telefono,
+                'direccion': rows[0].direccion,
                 'ciudad': rows[0].ciudad,
                 'codigoPostal': rows[0].codigo_postal,
                 'foto': rows[0].foto,
-                'alumnos': []
             }
             modelFamiliar.findToddlerIds(id, (err, rows) => {
+                if (err) return console.log(err.message)
+                if (rows.length === 0) {
+                    console.log('No tiene alumnos')
+                    res.json(familiar)
+                } else {
+                    console.log(rows.length)
+                    let counter = rows.length
+                    let i = 0
+                    modelAlumno.findById(rows[i].alumno, (err, rows) => {
+                        if (err) return console.log(err.message)
+                        if (rows.length === 0) {
+                            console.log('Problema recogiendo datos de alumnos')
+                        } else {
+                            let alumno = {
+                                'nombre': rows[0].nombre,
+                                'apellidos': rows[0].apellidos,
+                                'horario': rows[0].horario,
+                                'clase': rows[0].clase
+                            }
+                            familiar.alumno = alumno
+                            res.json(familiar)
+                        }
+                    })
+
+                }
+            })
+        }
+    })
+}*/
+
+function getFamiliarProfileById(id, res) {
+    modelFamiliar.findById(id, (err, rows) => {
+        if (err) return console.log(err.message)
+        if (rows.length === 0) {
+            res.json({ err: 'Usuario no registrado' })
+        } else {
+            let familiar = {
+                'nombre': rows[0].nombre,
+                'apellidos': rows[0].apellidos,
+                'email': rows[0].correo,
+                'telefono': rows[0].telefono,
+                'direccion': rows[0].direccion,
+                'ciudad': rows[0].ciudad,
+                'codigoPostal': rows[0].codigo_postal,
+                'foto': rows[0].foto,
+            }
+            modelAlumno.findAlumnosByFamiliarId(id, (err, rows) => {
                 if(err) return console.log(err.message)
                 if(rows.length === 0) {
                     console.log('No tiene alumnos')
                     res.json(familiar)
-                } else{
-                    console.log(rows.length)
-                    for (let i=0; i < rows.length; i++) {
-                        modelAlumno.findById(rows[i].alumno, (err, trows) => {
-                            if(err) return console.log(err.message)
-                            if(trows.length === 0) {
-                                console.log('Problema recogiendo datos de alumnos')
-                            } else {
-                                familiar.alumnos.push(JSON.parse(JSON.stringify(trows[0])))
-                                console.log(familiar)
-
-                            }
-                        })
-                    }
+                } else {
+                    familiar.alumnos = rows
                     res.json(familiar)
                 }
             })
@@ -161,51 +198,60 @@ function getFamiliarProfileById(id,res){
     })
 }
 
-function getEducadorProfileById(id,res) {
-    modelEducador.findById(id, (err,rows) => {
-        if(err) return console.log(err.message)
-        if(rows.length === 0) {
-            res.json({err : 'Usuario no registrado'})
+function getEducadorProfileById(id, res) {
+    modelEducador.findById(id, (err, rows) => {
+        if (err) return console.log(err.message)
+        if (rows.length === 0) {
+            res.json({ err: 'Usuario no registrado' })
         } else {
-            let educador = rows[0];
-            res.json({
-                'Nombre': educador.nombre, 
-                'Apellidos': educador.apellidos,
-                'Email': educador.correo,
-                'Telefono': educador.telefono,
-                'Foto': educador.foto
-            });
+            let educador = {
+                'nombre': rows[0].nombre,
+                'apellidos': rows[0].apellidos,
+                'email': rows[0].correo,
+                'telefono': rows[0].telefono,
+                'foto': rows[0].foto
+            }
+            modelClase.findClasesByEducadorId(id, (err, rows) => {
+                if(err) return console.log(err.message)
+                if(rows.length === 0) {
+                    console.log('No tiene clase')
+                    res.json(educador)
+                } else {
+                    educador.clases = rows
+                    res.json(educador)
+                }
+            })
         }
     })
 }
 
-function getFamiliarByEmail(email,pswd, res){
+function getFamiliarByEmail(email, pswd, res) {
     modelFamiliar.findByEmail(email, (err, rows) => {
-        if(err) return console.log(err.message)
-        if(rows.length === 0) {
-            res.json({err : 'Usuario no registrado'})
+        if (err) return console.log(err.message)
+        if (rows.length === 0) {
+            res.json({ err: 'Usuario no registrado' })
         } else {
-            if(pswd !== rows[0].contrasena) {
-                res.json({err: 'Contraseña incorrecta'});
+            if (pswd !== rows[0].contrasena) {
+                res.json({ err: 'Contraseña incorrecta' });
             } else {
                 let familiar = rows[0];
-                res.json({'id': familiar.id_familiar});
+                res.json({ 'id': familiar.id_familiar });
             }
         }
     })
 }
 
-function getEducadorByEmail(email, pswd, res){
+function getEducadorByEmail(email, pswd, res) {
     modelEducador.findByEmail(email, (err, rows) => {
-        if(err) return console.log(err.message)
-        if(rows.length === 0) {
-            res.json({err : 'Usuario no registrado'})
+        if (err) return console.log(err.message)
+        if (rows.length === 0) {
+            res.json({ err: 'Usuario no registrado' })
         } else {
-            if(pswd !== rows[0].contrasena) {
-                res.json({err: 'Contraseña incorrecta'});
+            if (pswd !== rows[0].contrasena) {
+                res.json({ err: 'Contraseña incorrecta' });
             } else {
                 let educador = rows[0];
-                res.json({'id': educador.id_educador});
+                res.json({ 'id': educador.id_educador });
             }
         }
     })
