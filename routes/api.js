@@ -75,6 +75,66 @@ router.post('/educadores/create', (req, res) => {
     })
 })
 
+//Ruta: /api/alumnos/create
+router.post('/alumnos/create', (req,res) => {
+    let datos = req.body.pdatosRegistro
+    let codigo = datos.codigoAlumno
+    let idFamiliar = datos.idFamiliar
+    modelClase.findClaseByCodigoAlumno(codigo, (err, rows) => {
+        if (err) return console.log(err.message)
+        if(rows.length === 0){
+            console.log('No existe')
+            res.json({error: 'Código incorrecto'})
+        } else {
+            console.log('La clase existe')
+            console.log(rows[0].id_clase)
+            modelAlumno.create({
+                clase: rows[0].id_clase,
+                foto: datos.foto,
+                nombre: datos.nombre,
+                apellidos: datos.apellidos,
+                fecha_nacimiento: datos.fechaNacimiento,
+                hora_entrada: datos.horaEntrada,
+                hora_salida: datos.horaSalida
+            }, (err, result) => {
+                if (err) {
+                    console.log(err.message);
+                    res.json({ error: 'Registro KO' })
+                } else {
+                    let alumnoId = result.insertId
+                    modelAlumno.linkarFamiliar({
+                        alumno: alumnoId, 
+                        familiar: idFamiliar
+                    }, (err, result) => {
+                        if(err){
+                            console.log(err.message)
+                            //To do: modelAlumno.delete()
+                            res.json({error: 'Registro KO'})
+                        } else {
+                            res.json({success: 'Registro OK'})
+                        }
+                    })
+            
+                }
+            })
+        }
+    })
+})
+
+
+//Ruta: /api/alumnos/fetch
+router.post('/alumnos/fetch', (req,res) => {
+    console.log(req.body)
+    let id = req.body.datos.idUsuario
+    let tipoUsuario = req.body.datos.tipoUsuario
+    console.log(id)
+    console.log(tipoUsuario)
+    if(tipoUsuario === 'familiares') {
+        
+    }
+    res.json('Entro')
+})
+
 //Ruta: /api/loginmatch
 router.post('/loginmatch', (req, res) => {
     let usuario = req.body.tipoLogin;

@@ -9,3 +9,22 @@ exports.findAlumnosByFamiliarId = (pId, done) => {
         done(null, rows);
     })
 }
+
+exports.create = ({clase, foto, nombre, apellidos, fecha_nacimiento, hora_entrada, hora_salida}, done) => {
+    let values = [clase, foto, nombre, apellidos, fecha_nacimiento, hora_entrada, hora_salida];
+    let inserta = 'INSERT INTO alumnos (clase, foto, nombre, apellidos, fecha_nacimiento, hora_entrada, hora_salida) VALUES (?,?,?,?,?,?,?)';
+    db.get().query(inserta, values, (err, result) => {
+        if(err) return done(err,null);
+        done(null, result);
+    });
+}
+
+exports.linkarFamiliar = ({alumno, familiar}, done) => {
+    let values = [alumno, familiar];
+    let inserta = 'INSERT INTO familiaresalumnos (alumno, familiar) VALUES (?,?)'
+    db.get().query(inserta, values, (err, result) => {
+        if(err) return done(err,null);
+        done(null, result)
+    })
+
+}

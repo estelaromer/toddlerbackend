@@ -9,3 +9,12 @@ exports.findClasesByEducadorId = (pId, done) => {
         done(null, rows);
     })
 }
+
+exports.findClaseByCodigoAlumno = (pCodigo, done) => {
+    let consulta = 'SELECT id_clase FROM clases WHERE codigo_alumno = ?'
+
+    db.get().query(consulta, [pCodigo], (err, rows) => {
+        if(err) return done(err,null);
+        done(null, rows);
+    })
+}
