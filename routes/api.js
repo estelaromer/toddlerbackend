@@ -5,27 +5,13 @@ let modelAlumno = require('../models/alumnos');
 let modelClase = require('./../models/clases');
 let modelFamiliar = require('../models/familiares');
 let modelEducador = require('../models/educadores');
-
-//Ruta: /api/personas/index
-/*router.get('/personas/index', (req, res) => {
-    modelPersona.index((err, rows) => {
-        if(err) return console.log(err.message)
-        res.json(rows);
-    });
-});
-
-//Ruta: /api/personas/show/3
-router.get('/personas/show/:id', (req, res) => {
-    let idPersona = req.params.id;
-    modelPersona.show(idPersona, (err, row) => {
-        if(err) return console.log(err.message)
-        res.json(row);
-    });
-})*/
+let modelCentro = require('./../models/centros');
+let modelCircular = require('./../models/circulares');
 
 //Ruta: /api/familiares/create
 router.post('/familiares/create', (req, res) => {
-    modelFamiliar.findByEmail(req.body.param1.correo, (err, rows) => {
+
+    /*modelFamiliar.findByEmail(req.body.param1.correo, (err, rows) => {
         if (err) return console.log(err.message)
         if (rows.length === 0) {
             modelFamiliar.create({
@@ -46,37 +32,100 @@ router.post('/familiares/create', (req, res) => {
         } else {
             res.json({ err: 'Usuario ya registrado' })
         }
+    })*/
+
+    let codigo = req.body.param1.codigo
+    let email = req.body.param1.email
+
+    modelAlumno.findByCodigo(codigo, (err, rows) => {
+        if (err) {
+            console.log(err.message)
+            res.json({error: 'Registro KO'})
+        } else {
+            if(rows.length === 0) {
+                res.json({err: 'Código incorrecto'})
+            } else {
+                modelFamiliar.findByEmail(email, (err, rows) =>{
+                    if(err){
+                        console.log(err.message)
+                        res.json({error: 'Registro KO'})
+                    } else {
+                        if(rows.length !== 0){
+                            res.json({err: 'Usuario ya registrado'})
+                        } else {
+                            modelFamiliar.create({
+                                nombre: req.body.param1.nombre,
+                                apellidos: req.body.param1.apellidos,
+                                email: email,
+                                telefono: req.body.param1.telefono,
+                                contrasena: req.body.param1.password,
+                                contrasenaRepeat: req.body.param1.passwordRepeat
+                            }, (err, result) => {
+                                if (err) {
+                                    console.log(err.message);
+                                    res.json({ error: 'Registro KO' })
+                                } else {
+                                    res.json({ success: 'Registro OK' });
+                                }
+                            })
+
+                        }
+                    }
+                })
+            }
+        }
     })
 })
 
 //Ruta: /api/educadores/create
 router.post('/educadores/create', (req, res) => {
-    modelEducador.findByEmail(req.body.param1.correo, (err, rows) => {
-        if (err) return console.log(err.message)
-        if (rows.length === 0) {
-            modelEducador.create({
-                nombre: req.body.param1.nombre,
-                apellidos: req.body.param1.apellidos,
-                correo: req.body.param1.correo,
-                telefono: req.body.param1.telefono,
-                contrasena: req.body.param1.contrasena,
-                contrasenaRepeat: req.body.param1.contrasenaRepeat
-            }, (err, result) => {
-                if (err) {
-                    console.log(err.message);
-                    res.json({ error: 'Registro KO' })
-                } else {
-                    res.json({ success: 'Registro OK' });
-                }
-            })
+    let codigo = req.body.param1.codigo
+    let email = req.body.param1.email
+
+    modelCentro.findByCodigo(codigo, (err, rows) => {
+        if (err) {
+            console.log(err.message)
+            res.json({error: 'Registro KO'})
         } else {
-            res.json({ err: 'Usuario ya registrado' })
+            if(rows.length === 0) {
+                res.json({err: 'Código incorrecto'})
+            } else {
+                let idCentro = rows[0].id_centro
+                modelEducador.findByEmail(email, (err, rows) =>{
+                    if(err){
+                        console.log(err.message)
+                        res.json({error: 'Registro KO'})
+                    } else {
+                        if(rows.length !== 0){
+                            res.json({err: 'Usuario ya registrado'})
+                        } else {
+                            modelEducador.create({
+                                nombre: req.body.param1.nombre,
+                                apellidos: req.body.param1.apellidos,
+                                email: email,
+                                telefono: req.body.param1.telefono,
+                                contrasena: req.body.param1.password,
+                                contrasenaRepeat: req.body.param1.passwordRepeat,
+                                centro: idCentro
+                            }, (err, result) => {
+                                if (err) {
+                                    console.log(err.message);
+                                    res.json({ error: 'Registro KO' })
+                                } else {
+                                    res.json({ success: 'Registro OK' });
+                                }
+                            })
+
+                        }
+                    }
+                })
+            }
         }
     })
 })
 
 //Ruta: /api/alumnos/create
-router.post('/alumnos/create', (req,res) => {
+/*router.post('/alumnos/create', (req,res) => {
     let datos = req.body.pdatosRegistro
     let codigo = datos.codigoAlumno
     let idFamiliar = datos.idFamiliar
@@ -119,7 +168,7 @@ router.post('/alumnos/create', (req,res) => {
             })
         }
     })
-})
+})*/
 
 
 //Ruta: /api/alumnos/fetch
@@ -137,9 +186,10 @@ router.post('/alumnos/fetch', (req,res) => {
 
 //Ruta: /api/loginmatch
 router.post('/loginmatch', (req, res) => {
-    let usuario = req.body.tipoLogin;
-    let email = req.body.correo;
-    let pswd = req.body.contrasena;
+
+    let usuario = req.body.tipoUsuario;
+    let email = req.body.email;
+    let pswd = req.body.password;
     if (usuario === 'familiares') {
         getFamiliarByEmail(email, pswd, res);
     } else {
@@ -157,6 +207,53 @@ router.post('/fetch/:id', (req, res) => {
     } else {
         getEducadorProfileById(id, res);
     }
+})
+
+//Ruta: /api/classes
+router.post('/classes', (req,res) => {
+    let idEducador = req.body.param;
+    modelEducador.getClasses(idEducador, (err, rows) => {
+        if(err) {
+            console.log(err.message);
+            res.json({error: 'Problema recuperando datos'})
+        } else {
+            if(rows.length === 0) {
+                res.json({error: 'Ninguna clase'})
+            } else {
+                res.json(rows);
+            }
+        }
+    })
+})
+
+//Ruta: /api/createCircular
+router.post('/circulares/create', (req,res) => {
+    modelCircular.create({
+        asunto: req.body.asunto,
+        mensaje: req.body.mensaje,
+        fecha: req.body.fechaEnvio,
+        remitente: req.body.remitente
+    }, (err,result) => {
+        if (err) {
+            console.log(err.message);
+            res.json({ error: 'Registro KO' })
+        } else {
+            let circularId = result.insertId
+            let clases = req.body.clasesDestinatarias
+            modelCircular.linkarClases({
+                circular: circularId,
+                clases: clases
+            }, (err, result) => {
+                if (err) {
+                    console.log(err.message);
+                    res.json({ error: 'Registro KO' })
+                } else {
+                    res.json({ success: 'Registro OK' });
+                }
+            })
+        }
+    })
+    //res.json({objeto: req.body});
 })
 
 /*function getFamiliarProfileById(id,res){
@@ -244,7 +341,8 @@ function getFamiliarProfileById(id, res) {
                 'codigoPostal': rows[0].codigo_postal,
                 'foto': rows[0].foto,
             }
-            modelAlumno.findAlumnosByFamiliarId(id, (err, rows) => {
+            res.json(familiar)
+            /*modelAlumno.findAlumnosByFamiliarId(id, (err, rows) => {
                 if(err) return console.log(err.message)
                 if(rows.length === 0) {
                     console.log('No tiene alumnos')
@@ -253,7 +351,7 @@ function getFamiliarProfileById(id, res) {
                     familiar.alumnos = rows
                     res.json(familiar)
                 }
-            })
+            })*/
         }
     })
 }
@@ -271,16 +369,7 @@ function getEducadorProfileById(id, res) {
                 'telefono': rows[0].telefono,
                 'foto': rows[0].foto
             }
-            modelClase.findClasesByEducadorId(id, (err, rows) => {
-                if(err) return console.log(err.message)
-                if(rows.length === 0) {
-                    console.log('No tiene clase')
-                    res.json(educador)
-                } else {
-                    educador.clases = rows
-                    res.json(educador)
-                }
-            })
+            res.json(educador)
         }
     })
 }
@@ -316,6 +405,17 @@ function getEducadorByEmail(email, pswd, res) {
         }
     })
 }
+
+/**            modelClase.findClasesByEducadorId(id, (err, rows) => {
+                if(err) return console.log(err.message)
+                if(rows.length === 0) {
+                    console.log('No tiene clase')
+                    res.json(educador)
+                } else {
+                    educador.clases = rows
+                    res.json(educador)
+                }
+            }) */
 
 //Ruta: /api/personas/destroy
 /*router.delete('/personas/destroy', (req,res) => {

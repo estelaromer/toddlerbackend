@@ -9,7 +9,8 @@ exports.connect = function(done) {
         user: 'root',
         password: 'root',
         port: 8889,
-        database: 'toddler'
+        database: 'toddler',
+        multipleStatements: true
     })
     done();
 }

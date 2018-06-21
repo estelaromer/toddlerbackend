@@ -10,6 +10,15 @@ exports.findAlumnosByFamiliarId = (pId, done) => {
     })
 }
 
+exports.findByCodigo = (pCodigo, done) => {
+    let consulta = 'SELECT * from alumnos WHERE codigo_alumno = ?'
+
+    db.get().query(consulta, [pCodigo], (err, rows) => {
+        if(err) return done (err, null)
+        done(null, rows)
+    })
+}
+
 exports.create = ({clase, foto, nombre, apellidos, fecha_nacimiento, hora_entrada, hora_salida}, done) => {
     let values = [clase, foto, nombre, apellidos, fecha_nacimiento, hora_entrada, hora_salida];
     let inserta = 'INSERT INTO alumnos (clase, foto, nombre, apellidos, fecha_nacimiento, hora_entrada, hora_salida) VALUES (?,?,?,?,?,?,?)';

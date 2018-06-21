@@ -41,8 +41,8 @@ exports.findById = (pId, done) => {
 }
 
 //Inserta un nuevo familiar en la tabla familiares
-exports.create = ({nombre, apellidos, correo, telefono, contrasena, contrasenaRepeat}, done) => {
-    let values = [nombre, apellidos, correo, telefono, contrasena, contrasenaRepeat];
+exports.create = ({nombre, apellidos, email, telefono, contrasena, contrasenaRepeat}, done) => {
+    let values = [nombre, apellidos, email, telefono, contrasena, contrasenaRepeat];
     console.log(values);
     let inserta = 'INSERT INTO familiares (nombre, apellidos, correo, telefono, contrasena, contrasena_repeat) VALUES (?,?,?,?,?,?)';
     db.get().query(inserta, values, (err, result) => {
