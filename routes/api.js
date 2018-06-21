@@ -248,12 +248,28 @@ router.post('/circulares/create', (req,res) => {
                     console.log(err.message);
                     res.json({ error: 'Registro KO' })
                 } else {
-                    res.json({ success: 'Registro OK' });
+                    res.json({ success: 'Registro OK' })
                 }
             })
         }
     })
     //res.json({objeto: req.body});
+})
+
+router.post('/circulares/fetch', (req,res) => {
+    let idEducador = req.body.param
+    modelCircular.getCircularesById(idEducador, (err, rows) => {
+        if (err) {
+            console.log(`Este es: ${err.message}`)
+            res.json({ error: 'Registro KO' })
+        } else {
+            if(rows.length === 0) {
+                res.json({error: 'Ningun registro'})
+            } else {
+                res.json(rows)
+            }
+        }
+    })
 })
 
 /*function getFamiliarProfileById(id,res){

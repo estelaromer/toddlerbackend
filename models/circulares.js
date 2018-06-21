@@ -23,3 +23,11 @@ exports.linkarClases = ({circular, clases}, done) => {
         done(null, result);
     })
 }
+
+exports.getCircularesById = (pId, done) => {
+    let consulta = 'SELECT * FROM circulares WHERE remitente = ?'
+    db.get().query(consulta, [pId], (err, result) => {
+        if(err) return done(err,null);
+        done(null, result);
+    })
+}
