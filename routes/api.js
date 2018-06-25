@@ -45,6 +45,7 @@ router.post('/familiares/create', (req, res) => {
             if(rows.length === 0) {
                 res.json({err: 'Código incorrecto'})
             } else {
+                let idAlumno = rows[0].id_alumno;
                 modelFamiliar.findByEmail(email, (err, rows) =>{
                     if(err){
                         console.log(err.message)
@@ -65,7 +66,18 @@ router.post('/familiares/create', (req, res) => {
                                     console.log(err.message);
                                     res.json({ error: 'Registro KO' })
                                 } else {
-                                    res.json({ success: 'Registro OK' });
+                                    let idFamiliar = result.insertId
+                                    modelAlumno.linkarFamiliar({
+                                        alumno: idAlumno, 
+                                        familiar: idFamiliar
+                                    }, (err, result) => {
+                                        if (err) {
+                                            console.log(err.message);
+                                            res.json({ error: 'Registro KO' })
+                                        } else {
+                                            res.json({ success: 'Registro OK' })
+                                        }
+                                    })
                                 }
                             })
 

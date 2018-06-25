@@ -25,9 +25,10 @@ exports.linkarClases = ({circular, clases}, done) => {
 }
 
 exports.getCircularesById = (pId, done) => {
-    let consulta = 'SELECT * FROM circulares WHERE remitente = ?'
+    let consulta = 'SELECT id_circular, asunto, mensaje, nombre, fecha FROM circulares c, circularesclases cc, clases cl WHERE c.remitente = ? AND cc.clase=cl.id_clase AND cc.circular = c.id_circular'
     db.get().query(consulta, [pId], (err, result) => {
         if(err) return done(err,null);
         done(null, result);
     })
 }
+
