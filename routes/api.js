@@ -268,15 +268,64 @@ router.post('/circulares/create', (req,res) => {
     //res.json({objeto: req.body});
 })
 
-router.post('/circulares/fetch', (req,res) => {
+router.post('/circulares/fetchbyeducador', (req,res) => {
     let idEducador = req.body.param
-    modelCircular.getCircularesById(idEducador, (err, rows) => {
+    modelCircular.getCircularesByIdEducador(idEducador, (err, rows) => {
         if (err) {
             console.log(`Este es: ${err.message}`)
             res.json({ error: 'Registro KO' })
         } else {
             if(rows.length === 0) {
                 res.json({error: 'Ningun registro'})
+            } else {
+                res.json(rows)
+            }
+        }
+    })
+})
+
+router.post('/circulares/fetchbyfamiliar', (req,res) => {
+    let idFamiliar = req.body.param
+    modelCircular.getCircularesByIdFamiliar(idFamiliar, (err, rows) => {
+        if (err) {
+            console.log(`Este es: ${err.message}`)
+            res.json({ error: 'Registro KO' })
+        } else {
+            if(rows.length === 0) {
+                res.json({error: 'Ningun registro'})
+            } else {
+                res.json(rows)
+            }
+        }
+    })
+})
+
+
+router.get('/circulares/fetchall', (req,res) => {
+    modelCircular.getAllCirculares((err, rows) => {
+        if (err) {
+            console.log(err.message)
+            res.json({error: 'Registro KO'})
+        } else {
+            if(rows.length === 0 ){
+                res.json({error: 'Ninguna circular'})
+            } else {
+                res.json(rows)
+            }
+        }
+    })
+})
+
+router.post('/alumnos/fetchbyfamiliar', (req, res) => {
+    let idFamiliar = req.body.param
+    console.log('ENTRO!!!')
+    modelAlumno.getAlumnosByFamiliarId(idFamiliar, (err, rows) => {
+        if(err){
+            console.log(err.menssage)
+            res.json({error:'Registro KO'})
+        } else {
+            if(rows.length === 0){
+                res.json({error: 'Ningún alumno'})
             } else {
                 res.json(rows)
             }

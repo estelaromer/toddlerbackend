@@ -1,8 +1,8 @@
 //Representa las acciones contra la tabla familiares
 let db = require('../db');
 
-exports.findAlumnosByFamiliarId = (pId, done) => {
-    let consulta = 'SELECT a.nombre as nombre, a.apellidos, a.foto, c.nombre as clase, ce.nombre as centro FROM familiaresalumnos fa, alumnos a, clases c, centros ce WHERE fa.alumno = a.id_alumno AND a.clase = c.id_clase AND c.centro = ce.id_centro AND fa.familiar = ?'
+exports.getAlumnosByFamiliarId = (pId, done) => {
+    let consulta = 'SELECT al.nombre, al.apellidos, al.clase, al.fecha_nacimiento, al.hora_entrada, al.hora_salida FROM toddler.alumnos al, toddler.familiares fa, toddler.familiaresalumnos famal WHERE fa.id_familiar= ? AND famal.familiar = fa.id_familiar AND al.id_alumno = famal.alumno'
 
     db.get().query(consulta, [pId], (err,rows) => {
         if(err) return done(err, null);
