@@ -2,7 +2,7 @@
 let db = require('../db');
 
 exports.getAlumnosByFamiliarId = (pId, done) => {
-    let consulta = 'SELECT al.nombre, al.apellidos, al.clase, al.fecha_nacimiento, al.hora_entrada, al.hora_salida FROM toddler.alumnos al, toddler.familiares fa, toddler.familiaresalumnos famal WHERE fa.id_familiar= ? AND famal.familiar = fa.id_familiar AND al.id_alumno = famal.alumno'
+    let consulta = 'SELECT al.id_alumno, al.nombre, al.apellidos, al.clase, al.fecha_nacimiento, al.hora_entrada, al.hora_salida FROM toddler.alumnos al, toddler.familiares fa, toddler.familiaresalumnos famal WHERE fa.id_familiar= ? AND famal.familiar = fa.id_familiar AND al.id_alumno = famal.alumno'
 
     db.get().query(consulta, [pId], (err,rows) => {
         if(err) return done(err, null);
@@ -10,8 +10,17 @@ exports.getAlumnosByFamiliarId = (pId, done) => {
     })
 }
 
+exports.getAlumnosByEducadorId = (pId, done) => {
+    let consulta = 'SELECT al.id_alumno, al.nombre as nomAlumno, al.apellidos, cla.id_clase, cla.nombre as nomClase FROM toddler.alumnos al, toddler.educadoresclases edcla, toddler.educadores ed, toddler.clases cla WHERE al.clase = cla.id_clase AND cla.id_clase = edcla.clase AND edcla.educador = ed.id_educador AND ed.id_educador = ?'
+
+    db.get().query(consulta, [pId], (err, rows) => {
+        if(err) return done(err, null);
+        done(null, rows);
+    })
+}
+
 exports.findByCodigo = (pCodigo, done) => {
-    let consulta = 'SELECT * from alumnos WHERE codigo_alumno = ?'
+    let consulta = 'SELECT id_alumno from alumnos WHERE codigo_alumno = ?'
 
     db.get().query(consulta, [pCodigo], (err, rows) => {
         if(err) return done (err, null)

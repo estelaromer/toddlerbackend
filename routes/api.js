@@ -7,6 +7,7 @@ let modelFamiliar = require('../models/familiares');
 let modelEducador = require('../models/educadores');
 let modelCentro = require('./../models/centros');
 let modelCircular = require('./../models/circulares');
+let modelSeguimiento = require('./../models/seguimientos');
 
 //Ruta: /api/familiares/create
 router.post('/familiares/create', (req, res) => {
@@ -40,19 +41,19 @@ router.post('/familiares/create', (req, res) => {
     modelAlumno.findByCodigo(codigo, (err, rows) => {
         if (err) {
             console.log(err.message)
-            res.json({error: 'Registro KO'})
+            res.json({ error: 'Registro KO' })
         } else {
-            if(rows.length === 0) {
-                res.json({err: 'Código incorrecto'})
+            if (rows.length === 0) {
+                res.json({ err: 'Código incorrecto' })
             } else {
                 let idAlumno = rows[0].id_alumno;
-                modelFamiliar.findByEmail(email, (err, rows) =>{
-                    if(err){
+                modelFamiliar.findByEmail(email, (err, rows) => {
+                    if (err) {
                         console.log(err.message)
-                        res.json({error: 'Registro KO'})
+                        res.json({ error: 'Registro KO' })
                     } else {
-                        if(rows.length !== 0){
-                            res.json({err: 'Usuario ya registrado'})
+                        if (rows.length !== 0) {
+                            res.json({ err: 'Usuario ya registrado' })
                         } else {
                             modelFamiliar.create({
                                 nombre: req.body.param1.nombre,
@@ -68,7 +69,7 @@ router.post('/familiares/create', (req, res) => {
                                 } else {
                                     let idFamiliar = result.insertId
                                     modelAlumno.linkarFamiliar({
-                                        alumno: idAlumno, 
+                                        alumno: idAlumno,
                                         familiar: idFamiliar
                                     }, (err, result) => {
                                         if (err) {
@@ -97,19 +98,19 @@ router.post('/educadores/create', (req, res) => {
     modelCentro.findByCodigo(codigo, (err, rows) => {
         if (err) {
             console.log(err.message)
-            res.json({error: 'Registro KO'})
+            res.json({ error: 'Registro KO' })
         } else {
-            if(rows.length === 0) {
-                res.json({err: 'Código incorrecto'})
+            if (rows.length === 0) {
+                res.json({ err: 'Código incorrecto' })
             } else {
                 let idCentro = rows[0].id_centro
-                modelEducador.findByEmail(email, (err, rows) =>{
-                    if(err){
+                modelEducador.findByEmail(email, (err, rows) => {
+                    if (err) {
                         console.log(err.message)
-                        res.json({error: 'Registro KO'})
+                        res.json({ error: 'Registro KO' })
                     } else {
-                        if(rows.length !== 0){
-                            res.json({err: 'Usuario ya registrado'})
+                        if (rows.length !== 0) {
+                            res.json({ err: 'Usuario ya registrado' })
                         } else {
                             modelEducador.create({
                                 nombre: req.body.param1.nombre,
@@ -184,14 +185,14 @@ router.post('/educadores/create', (req, res) => {
 
 
 //Ruta: /api/alumnos/fetch
-router.post('/alumnos/fetch', (req,res) => {
+router.post('/alumnos/fetch', (req, res) => {
     console.log(req.body)
     let id = req.body.datos.idUsuario
     let tipoUsuario = req.body.datos.tipoUsuario
     console.log(id)
     console.log(tipoUsuario)
-    if(tipoUsuario === 'familiares') {
-        
+    if (tipoUsuario === 'familiares') {
+
     }
     res.json('Entro')
 })
@@ -222,15 +223,15 @@ router.post('/fetch/:id', (req, res) => {
 })
 
 //Ruta: /api/classes
-router.post('/classes', (req,res) => {
+router.post('/classes', (req, res) => {
     let idEducador = req.body.param;
     modelEducador.getClasses(idEducador, (err, rows) => {
-        if(err) {
+        if (err) {
             console.log(err.message);
-            res.json({error: 'Problema recuperando datos'})
+            res.json({ error: 'Problema recuperando datos' })
         } else {
-            if(rows.length === 0) {
-                res.json({error: 'Ninguna clase'})
+            if (rows.length === 0) {
+                res.json({ error: 'Ninguna clase' })
             } else {
                 res.json(rows);
             }
@@ -239,13 +240,13 @@ router.post('/classes', (req,res) => {
 })
 
 //Ruta: /api/createCircular
-router.post('/circulares/create', (req,res) => {
+router.post('/circulares/create', (req, res) => {
     modelCircular.create({
         asunto: req.body.asunto,
         mensaje: req.body.mensaje,
         fecha: req.body.fechaEnvio,
         remitente: req.body.remitente
-    }, (err,result) => {
+    }, (err, result) => {
         if (err) {
             console.log(err.message);
             res.json({ error: 'Registro KO' })
@@ -265,18 +266,17 @@ router.post('/circulares/create', (req,res) => {
             })
         }
     })
-    //res.json({objeto: req.body});
 })
 
-router.post('/circulares/fetchbyeducador', (req,res) => {
+router.post('/circulares/fetchbyeducador', (req, res) => {
     let idEducador = req.body.param
     modelCircular.getCircularesByIdEducador(idEducador, (err, rows) => {
         if (err) {
             console.log(`Este es: ${err.message}`)
             res.json({ error: 'Registro KO' })
         } else {
-            if(rows.length === 0) {
-                res.json({error: 'Ningun registro'})
+            if (rows.length === 0) {
+                res.json({ error: 'Ningun registro' })
             } else {
                 res.json(rows)
             }
@@ -284,15 +284,15 @@ router.post('/circulares/fetchbyeducador', (req,res) => {
     })
 })
 
-router.post('/circulares/fetchbyfamiliar', (req,res) => {
+router.post('/circulares/fetchbyfamiliar', (req, res) => {
     let idFamiliar = req.body.param
     modelCircular.getCircularesByIdFamiliar(idFamiliar, (err, rows) => {
         if (err) {
             console.log(`Este es: ${err.message}`)
             res.json({ error: 'Registro KO' })
         } else {
-            if(rows.length === 0) {
-                res.json({error: 'Ningun registro'})
+            if (rows.length === 0) {
+                res.json({ error: 'Ningun registro' })
             } else {
                 res.json(rows)
             }
@@ -301,14 +301,14 @@ router.post('/circulares/fetchbyfamiliar', (req,res) => {
 })
 
 
-router.get('/circulares/fetchall', (req,res) => {
+router.get('/circulares/fetchall', (req, res) => {
     modelCircular.getAllCirculares((err, rows) => {
         if (err) {
             console.log(err.message)
-            res.json({error: 'Registro KO'})
+            res.json({ error: 'Registro KO' })
         } else {
-            if(rows.length === 0 ){
-                res.json({error: 'Ninguna circular'})
+            if (rows.length === 0) {
+                res.json({ error: 'Ninguna circular' })
             } else {
                 res.json(rows)
             }
@@ -320,17 +320,154 @@ router.post('/alumnos/fetchbyfamiliar', (req, res) => {
     let idFamiliar = req.body.param
     console.log('ENTRO!!!')
     modelAlumno.getAlumnosByFamiliarId(idFamiliar, (err, rows) => {
-        if(err){
+        if (err) {
             console.log(err.menssage)
-            res.json({error:'Registro KO'})
+            res.json({ error: 'Registro KO' })
         } else {
-            if(rows.length === 0){
-                res.json({error: 'Ningún alumno'})
+            if (rows.length === 0) {
+                res.json({ error: 'Ningún alumno' })
             } else {
                 res.json(rows)
             }
         }
     })
+})
+
+router.post('/alumnos/fetchbyeducador', (req, res) => {
+    let idEducador = req.body.param
+    modelAlumno.getAlumnosByEducadorId(idEducador, (err, rows) => {
+        if (err) {
+            console.log(err.message)
+            res.json({ error: 'Registro KO' })
+        } else {
+            if (rows.length === 0) {
+                res.json({ error: 'Ningún alumno' })
+            } else {
+                res.json(rows)
+            }
+        }
+    })
+})
+
+router.post('/alumnos/linkar', (req, res) => {
+    let idFamiliar = req.body.idFamiliar
+    let codigoAlumno = req.body.codigoAlumno.codigo
+    modelAlumno.findByCodigo(codigoAlumno, (err, rows) => {
+        console.log(codigoAlumno)
+        if (err) {
+            console.log(err.message)
+            res.json({ error: 'Registro KO' })
+        } else {
+            if (rows.length === 0) {
+                res.json({ error: 'Código incorrecto' })
+            } else {
+                modelAlumno.linkarFamiliar({
+                    alumno: rows[0].id_alumno,
+                    familiar: idFamiliar
+                }, (err, result) => {
+                    if (err) {
+                        console.log(err.message);
+                        res.json({ error: 'Registro KO' })
+                    } else {
+                        res.json({ success: 'Registro OK' })
+                    }
+                })
+            }
+        }
+
+    })
+})
+
+router.post('/seguimientos/create', (req, res) => {
+    modelSeguimiento.create({
+        fecha: req.body.fechaEnvio,
+        tipo: req.body.tipo,
+        subtipo: req.body.subtipo,
+        estado: req.body.estado,
+        comentarios: req.body.comentarios,
+        alumnos: req.body.alumnosDestinatarios,
+        remitente: req.body.remitente
+    }, (err, result) => {
+        if (err) {
+            console.log(`Aqui falla: ${err.message}`);
+            res.json({ error: 'Registro KO' })
+        } else {
+            res.json({ success: 'Registro OK' })
+        }
+    })
+})
+
+
+router.post('/seguimientos/fetchreceived', (req, res) => {
+    let id = req.body.id
+    let usuario = req.body.usuario
+    switch (usuario) {
+        case 'educadores':
+            modelSeguimiento.getReceivedByEducadorId(id, (err, rows) => {
+                if (err) {
+                    console.log(err);
+                    res.json({ error: 'No se ha podido recuperar' })
+                } else {
+                    if (rows.length === 0) {
+                        res.json({ error: 'No tiene seguimientos' })
+                    } else {
+                        res.json(rows)
+                    }
+                }
+            })
+            break;
+        case 'familiares':
+            modelSeguimiento.getReceivedByFamiliarId(id, (err, rows) => {
+                if (err) {
+                    console.log(err);
+                    res.json({ error: 'No se ha podido recuperar' })
+                } else {
+                    if (rows.length === 0) {
+                        res.json({ error: 'No tiene seguimientos' })
+                    } else {
+                        res.json(rows)
+                    }
+                }
+            })
+            break;
+    }
+})
+
+router.post('/seguimientos/fetchsent', (req, res) => {
+    let id = req.body.id
+    let usuario = req.body.usuario
+    switch (usuario) {
+        case 'educadores':
+            modelSeguimiento.getSentByEducadorId(id, (err, rows) => {
+                if (err) {
+                    console.log(err);
+                    res.json({ error: 'No se ha podido recuperar' })
+                } else {
+                    if (rows.length === 0) {
+                        res.json({ error: 'No tiene seguimientos' })
+                    } else {
+                        res.json(rows)
+                    }
+                }
+            })
+            break;
+        case 'familiares':
+            modelSeguimiento.getSentByFamiliarId(id, (err, rows) => {
+                if (err) {
+                    console.log(err);
+                    res.json({ error: 'No se ha podido recuperar' })
+                } else {
+                    if (rows.length === 0) {
+                        res.json({ error: 'No tiene seguimientos' })
+                    } else {
+                        res.json(rows)
+                    }
+                }
+            })
+            break;
+    }
+
+
 })
 
 /*function getFamiliarProfileById(id,res){
